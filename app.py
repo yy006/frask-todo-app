@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect # 追加で2つimportする
+from flask import Flask, render_template, request, redirect, url_for # 追加で2つimportする
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
@@ -16,8 +16,8 @@ class Post(db.Model):
 @app.route('/', methods=['GET', 'POST']) # こちらに変更
 def index():
     if request.method == 'GET':
-        posts = Post.query.all()
-        return render_template('index.html', posts=posts)
+        posts = Post.query.order_by(Post.due).all()
+        return render_template('index.html', posts=posts, today=date.today())
 
     else:
         title = request.form.get('title')
